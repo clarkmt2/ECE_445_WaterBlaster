@@ -3,8 +3,6 @@
 "Tool:","Eeschema 7.0.7"
 "Generator:","C:\Program Files\KiCad\7.0\bin\scripting\plugins/bom_csv_grouped_by_value.py"
 "Component Count:","74"
-"Collated Components:"
-
 "Item","Qty","Reference(s)","Value","LibPart","Footprint","Datasheet","DNP","DNP","MANUFACTURER","MAXIMUM_PACKAGE_HEIGHT","MPN","Note","PARTREV","STANDARD"
 "1","2","C1, C2","1.0uF","device:C","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~","","","","","CAP CER 1UF 10V X5R 0603","10V X5R 0603","",""
 "2","1","C3","10uF","Device:C","Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder","~","","","","","CAP CER 10UF 100V X5R 0603","","",""
