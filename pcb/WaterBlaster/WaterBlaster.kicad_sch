@@ -1,481 +1,1116 @@
-(kicad_sch (version 20230121) (generator eeschema)
-
-  (uuid 242ebdf6-532f-4670-aff3-22151a1a4e22)
-
-  (paper "A4")
-
-  (lib_symbols
-    (symbol "Mechanical:MountingHole" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
-      (property "Reference" "H" (at 0 5.08 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Value" "MountingHole" (at 0 3.175 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Footprint" "" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "~" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_keywords" "mounting hole" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_description" "Mounting Hole without connection" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "ki_fp_filters" "MountingHole*" (at 0 0 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "MountingHole_0_1"
-        (circle (center 0 0) (radius 1.27)
-          (stroke (width 1.27) (type default))
-          (fill (type none))
-        )
-      )
-    )
-  )
-
-
-  (wire (pts (xy 168.91 96.52) (xy 177.8 96.52))
-    (stroke (width 0) (type default))
-    (uuid 01b5db05-f467-45df-a735-eb05342e2e5f)
-  )
-  (wire (pts (xy 168.91 107.95) (xy 177.8 107.95))
-    (stroke (width 0) (type default))
-    (uuid 143d225d-f712-4ec2-a481-2673673070a6)
-  )
-  (wire (pts (xy 90.17 93.98) (xy 119.38 93.98))
-    (stroke (width 0) (type default))
-    (uuid 1b34eaf5-a580-4081-b334-bed4d513585c)
-  )
-  (wire (pts (xy 168.91 64.77) (xy 177.8 64.77))
-    (stroke (width 0) (type default))
-    (uuid 1cb9b92e-33a8-4ad4-ad56-78d777640620)
-  )
-  (wire (pts (xy 168.91 113.03) (xy 177.8 113.03))
-    (stroke (width 0) (type default))
-    (uuid 20ed9094-5ce1-4488-8416-a62f0bb6f6e2)
-  )
-  (wire (pts (xy 168.91 110.49) (xy 177.8 110.49))
-    (stroke (width 0) (type default))
-    (uuid 28fa8f4b-a3a3-416d-b8e0-490dc8f6eab8)
-  )
-  (wire (pts (xy 168.91 93.98) (xy 177.8 93.98))
-    (stroke (width 0) (type default))
-    (uuid 2d9b3004-6004-4b4d-8c72-954f0efc81a8)
-  )
-  (wire (pts (xy 168.91 101.6) (xy 177.8 101.6))
-    (stroke (width 0) (type default))
-    (uuid 2e1b8d6d-4e28-4a39-9dbf-423719201837)
-  )
-  (wire (pts (xy 168.91 99.06) (xy 177.8 99.06))
-    (stroke (width 0) (type default))
-    (uuid 3800ba54-9f4a-4413-8f50-80d3523ea363)
-  )
-  (wire (pts (xy 90.17 96.52) (xy 119.38 96.52))
-    (stroke (width 0) (type default))
-    (uuid 5de631e9-22d5-4988-ab23-4c4eb6b2230b)
-  )
-  (wire (pts (xy 168.91 57.15) (xy 177.8 57.15))
-    (stroke (width 0) (type default))
-    (uuid 78d2216a-63e5-4b3e-b370-6db4e6827ffa)
-  )
-  (wire (pts (xy 168.91 91.44) (xy 177.8 91.44))
-    (stroke (width 0) (type default))
-    (uuid 83220b6f-4545-43bb-97d0-8ae538748e5e)
-  )
-  (wire (pts (xy 168.91 54.61) (xy 177.8 54.61))
-    (stroke (width 0) (type default))
-    (uuid 83de4324-95d3-4884-8ed2-c21b5a879882)
-  )
-  (wire (pts (xy 168.91 115.57) (xy 177.8 115.57))
-    (stroke (width 0) (type default))
-    (uuid c056f2e5-7db0-430c-90de-05dc9a00b321)
-  )
-  (wire (pts (xy 168.91 104.14) (xy 177.8 104.14))
-    (stroke (width 0) (type default))
-    (uuid d82b5afb-6387-4c17-a298-4592f1de4c40)
-  )
-  (wire (pts (xy 168.91 62.23) (xy 177.8 62.23))
-    (stroke (width 0) (type default))
-    (uuid d9ce5700-c0f0-4538-a25f-bdf3edbfda0c)
-  )
-  (wire (pts (xy 168.91 59.69) (xy 177.8 59.69))
-    (stroke (width 0) (type default))
-    (uuid e5ae13cd-9907-4392-b8ca-dad303c03f12)
-  )
-
-  (text "SDO = MISO\n" (at 185.42 60.96 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 05b144a5-5873-41f0-ab27-6d7be01187f1)
-  )
-  (text "SDI = MOSI" (at 185.42 63.5 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid fdddb40e-f378-4278-a62e-b431f3741df4)
-  )
-
-  (symbol (lib_id "Mechanical:MountingHole") (at 46.99 161.29 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid 57369027-3bac-47e5-b190-796b72686a18)
-    (property "Reference" "H3" (at 50.165 160.0199 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "MountingHole" (at 50.165 162.5599 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "MountingHole:MountingHole_2.5mm" (at 46.99 161.29 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 46.99 161.29 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (instances
-      (project "WaterBlaster"
-        (path "/0443326e-25f8-457c-85d4-efd5671bcf24"
-          (reference "H3") (unit 1)
-        )
-      )
-      (project "Wheel_v8.1"
-        (path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
-          (reference "H3") (unit 1)
-        )
-      )
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
-          (reference "H3") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Mechanical:MountingHole") (at 46.99 155.575 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid b8087b68-3f23-4c60-8df7-79d94b21533f)
-    (property "Reference" "H2" (at 50.165 154.3049 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "MountingHole" (at 50.165 156.8449 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "MountingHole:MountingHole_2.5mm" (at 46.99 155.575 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 46.99 155.575 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (instances
-      (project "WaterBlaster"
-        (path "/0443326e-25f8-457c-85d4-efd5671bcf24"
-          (reference "H2") (unit 1)
-        )
-      )
-      (project "Wheel_v8.1"
-        (path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
-          (reference "H2") (unit 1)
-        )
-      )
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
-          (reference "H2") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Mechanical:MountingHole") (at 46.99 167.005 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid cff52e5b-c668-4459-970a-1595a32bfacb)
-    (property "Reference" "H4" (at 50.165 165.7349 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "MountingHole" (at 50.165 168.2749 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "MountingHole:MountingHole_2.5mm" (at 46.99 167.005 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 46.99 167.005 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (instances
-      (project "WaterBlaster"
-        (path "/0443326e-25f8-457c-85d4-efd5671bcf24"
-          (reference "H4") (unit 1)
-        )
-      )
-      (project "Wheel_v8.1"
-        (path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
-          (reference "H4") (unit 1)
-        )
-      )
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
-          (reference "H4") (unit 1)
-        )
-      )
-    )
-  )
-
-  (symbol (lib_id "Mechanical:MountingHole") (at 46.99 149.86 0) (unit 1)
-    (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
-    (uuid ec2c250c-e679-4d7f-ae93-2edb7d854869)
-    (property "Reference" "H1" (at 50.165 148.5899 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Value" "MountingHole" (at 50.165 151.1299 0)
-      (effects (font (size 1.27 1.27)) (justify left))
-    )
-    (property "Footprint" "MountingHole:MountingHole_2.5mm" (at 46.99 149.86 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "~" (at 46.99 149.86 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (instances
-      (project "WaterBlaster"
-        (path "/0443326e-25f8-457c-85d4-efd5671bcf24"
-          (reference "H1") (unit 1)
-        )
-      )
-      (project "Wheel_v8.1"
-        (path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
-          (reference "H1") (unit 1)
-        )
-      )
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
-          (reference "H1") (unit 1)
-        )
-      )
-    )
-  )
-
-  (sheet (at 46.99 83.82) (size 43.18 20.32) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 2d7f3710-3b84-43df-8e9b-38c43e7c6f74)
-    (property "Sheetname" "PumpAndValve" (at 46.99 83.1084 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "PumpAndValve.kicad_sch" (at 46.99 104.7246 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "ValveControl" input (at 90.17 93.98 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid a5a6a9a7-00f5-438a-ac73-fdd3b97056c3)
-    )
-    (pin "PumpControl" input (at 90.17 96.52 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid da8886de-0135-4ad0-9c30-c9ebfbba1060)
-    )
-    (instances
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22" (page "6"))
-      )
-    )
-  )
-
-  (sheet (at 119.38 41.91) (size 49.53 77.47) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 2e794be7-7c66-4054-9f23-b95c8914d3e5)
-    (property "Sheetname" "MCU" (at 119.38 41.1984 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "MCU.kicad_sch" (at 119.38 119.9646 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "MISO" input (at 168.91 59.69 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid af4efde7-d661-458f-a40f-03c361113fd9)
-    )
-    (pin "SCK" input (at 168.91 57.15 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 170f4668-b9b3-4282-8f7a-2246f2afc073)
-    )
-    (pin "MOSI" input (at 168.91 62.23 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid f88fa44b-57e0-438c-bff7-4cbecfed6708)
-    )
-    (pin "LED4" input (at 168.91 115.57 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 93cab075-55df-4363-b4de-5a1b72dfd456)
-    )
-    (pin "ValveControl" input (at 119.38 93.98 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 7f4f3221-d2bf-454a-ad1a-4eea44a9ac14)
-    )
-    (pin "LED1" input (at 168.91 107.95 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid df3424ea-831b-4ed3-a513-32514f77375e)
-    )
-    (pin "LED3" input (at 168.91 113.03 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 843067de-b472-4c48-a0bf-3f30bce24bed)
-    )
-    (pin "Button1" input (at 168.91 91.44 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid d7b0de2b-9f94-45d1-bc91-d8ad9056cedb)
-    )
-    (pin "Button2" input (at 168.91 93.98 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 2976af89-43ca-4871-a5f7-3b797d47833f)
-    )
-    (pin "{slash}CS" input (at 168.91 54.61 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 24501e60-011c-4453-a33e-b5ce9cf736c7)
-    )
-    (pin "Button5" input (at 168.91 101.6 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 1d8493ad-5f68-46ce-b11c-d9104e350222)
-    )
-    (pin "Button6" input (at 168.91 104.14 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid f567a423-6337-40ca-a007-a1ff8b96a179)
-    )
-    (pin "LED2" input (at 168.91 110.49 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 12e420a0-57a3-4f13-ad7d-f4eee761f676)
-    )
-    (pin "Button3" input (at 168.91 96.52 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 3b8b3616-e5d2-4325-b818-5a16dbada3c2)
-    )
-    (pin "{slash}RESET" input (at 168.91 64.77 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid b3ed0650-b154-42eb-8bb3-4571a190a5c5)
-    )
-    (pin "PumpControl" input (at 119.38 96.52 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid fa640211-a014-4b04-956b-6c85d1a3e28a)
-    )
-    (pin "Button4" input (at 168.91 99.06 0)
-      (effects (font (size 1.27 1.27)) (justify right))
-      (uuid 5c4400d8-6600-465a-a33e-1a41816973f3)
-    )
-    (instances
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22" (page "4"))
-      )
-    )
-  )
-
-  (sheet (at 177.8 45.72) (size 31.75 35.56) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 9e91a75d-ea98-42f4-b76b-2ecca5e44db4)
-    (property "Sheetname" "Display" (at 177.8 45.0084 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "Display.kicad_sch" (at 177.8 81.8646 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "{slash}CS" input (at 177.8 54.61 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid d53c751d-febc-4c9f-afb8-97c2ca7b300d)
-    )
-    (pin "{slash}RESET" input (at 177.8 64.77 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 1b5eec10-1619-49e0-870f-40583750ee41)
-    )
-    (pin "SDO" input (at 177.8 59.69 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid b986ec8e-45cd-45a1-a6d2-0fc8141fde82)
-    )
-    (pin "SCLK" input (at 177.8 57.15 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid cb5138de-9baa-43f1-be21-1094da07f8be)
-    )
-    (pin "SDI" input (at 177.8 62.23 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 1f123af1-94b1-452a-ba66-14bd7f571a46)
-    )
-    (instances
-      (project "WaterBlaster"
-        (path "/0443326e-25f8-457c-85d4-efd5671bcf24" (page "6"))
-      )
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22" (page "3"))
-      )
-    )
-  )
-
-  (sheet (at 33.02 39.37) (size 57.15 33.02) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid a0871260-e912-4181-a19c-a435e672fecd)
-    (property "Sheetname" "PowerProtection" (at 33.02 38.6584 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "PowerProtection.kicad_sch" (at 33.02 72.9746 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22" (page "2"))
-      )
-    )
-  )
-
-  (sheet (at 177.8 86.36) (size 29.21 35.56) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid be283d61-5b8d-425d-8fd4-cb7c3f3b5cd3)
-    (property "Sheetname" "IO" (at 177.8 85.6484 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "IO.kicad_sch" (at 177.8 122.5046 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (pin "Button3" input (at 177.8 96.52 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 450b26a3-752f-450b-8c9c-b6ca5a55d218)
-    )
-    (pin "Button4" input (at 177.8 99.06 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 6dbc7cb6-5ec6-4154-85f5-c78f3b710a70)
-    )
-    (pin "Button5" input (at 177.8 101.6 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 20fcca1f-3cf1-4e2b-9f73-646c0d1acc73)
-    )
-    (pin "Button6" input (at 177.8 104.14 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 49e69df8-9e5e-4116-8034-60587594f35f)
-    )
-    (pin "LED3" input (at 177.8 113.03 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid a9b65b6f-eb8f-42aa-b86b-4de9c862244f)
-    )
-    (pin "LED4" input (at 177.8 115.57 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 60480202-23a3-447e-8983-c88b8d9d6197)
-    )
-    (pin "LED1" input (at 177.8 107.95 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 29938f0f-fb36-49a9-a7a7-2b3297baffd0)
-    )
-    (pin "LED2" input (at 177.8 110.49 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid a99cdd6b-d7fa-4cdc-89e9-af60a98eb3cb)
-    )
-    (pin "Button1" input (at 177.8 91.44 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 92a9b2b6-8647-47c9-a680-d488bb0227f6)
-    )
-    (pin "Button2" input (at 177.8 93.98 180)
-      (effects (font (size 1.27 1.27)) (justify left))
-      (uuid 87027254-1b1f-4197-a9c7-44e8e05e160c)
-    )
-    (instances
-      (project "WaterBlasterV2"
-        (path "/242ebdf6-532f-4670-aff3-22151a1a4e22" (page "5"))
-      )
-    )
-  )
-
-  (sheet_instances
-    (path "/" (page "1"))
-  )
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "242ebdf6-532f-4670-aff3-22151a1a4e22")
+	(paper "A4")
+	(lib_symbols
+		(symbol "Mechanical:MountingHole"
+			(pin_names
+				(offset 1.016)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole"
+				(at 0 3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole without connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_0_1"
+				(circle
+					(center 0 0)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "SDO = MISO\n"
+		(exclude_from_sim no)
+		(at 185.42 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "05b144a5-5873-41f0-ab27-6d7be01187f1")
+	)
+	(text "SDI = MOSI"
+		(exclude_from_sim no)
+		(at 185.42 63.5 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fdddb40e-f378-4278-a62e-b431f3741df4")
+	)
+	(wire
+		(pts
+			(xy 168.91 96.52) (xy 177.8 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01b5db05-f467-45df-a735-eb05342e2e5f")
+	)
+	(wire
+		(pts
+			(xy 168.91 107.95) (xy 177.8 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "143d225d-f712-4ec2-a481-2673673070a6")
+	)
+	(wire
+		(pts
+			(xy 90.17 93.98) (xy 119.38 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1b34eaf5-a580-4081-b334-bed4d513585c")
+	)
+	(wire
+		(pts
+			(xy 168.91 64.77) (xy 177.8 64.77)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1cb9b92e-33a8-4ad4-ad56-78d777640620")
+	)
+	(wire
+		(pts
+			(xy 168.91 113.03) (xy 177.8 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "20ed9094-5ce1-4488-8416-a62f0bb6f6e2")
+	)
+	(wire
+		(pts
+			(xy 168.91 110.49) (xy 177.8 110.49)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "28fa8f4b-a3a3-416d-b8e0-490dc8f6eab8")
+	)
+	(wire
+		(pts
+			(xy 168.91 93.98) (xy 177.8 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2d9b3004-6004-4b4d-8c72-954f0efc81a8")
+	)
+	(wire
+		(pts
+			(xy 168.91 101.6) (xy 177.8 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2e1b8d6d-4e28-4a39-9dbf-423719201837")
+	)
+	(wire
+		(pts
+			(xy 168.91 99.06) (xy 177.8 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3800ba54-9f4a-4413-8f50-80d3523ea363")
+	)
+	(wire
+		(pts
+			(xy 90.17 96.52) (xy 119.38 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5de631e9-22d5-4988-ab23-4c4eb6b2230b")
+	)
+	(wire
+		(pts
+			(xy 168.91 57.15) (xy 177.8 57.15)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78d2216a-63e5-4b3e-b370-6db4e6827ffa")
+	)
+	(wire
+		(pts
+			(xy 168.91 91.44) (xy 177.8 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "83220b6f-4545-43bb-97d0-8ae538748e5e")
+	)
+	(wire
+		(pts
+			(xy 168.91 54.61) (xy 177.8 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "83de4324-95d3-4884-8ed2-c21b5a879882")
+	)
+	(wire
+		(pts
+			(xy 168.91 115.57) (xy 177.8 115.57)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c056f2e5-7db0-430c-90de-05dc9a00b321")
+	)
+	(wire
+		(pts
+			(xy 168.91 104.14) (xy 177.8 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d82b5afb-6387-4c17-a298-4592f1de4c40")
+	)
+	(wire
+		(pts
+			(xy 168.91 62.23) (xy 177.8 62.23)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d9ce5700-c0f0-4538-a25f-bdf3edbfda0c")
+	)
+	(wire
+		(pts
+			(xy 168.91 59.69) (xy 177.8 59.69)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e5ae13cd-9907-4392-b8ca-dad303c03f12")
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 46.99 161.29 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "57369027-3bac-47e5-b190-796b72686a18")
+		(property "Reference" "H3"
+			(at 50.165 160.0199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 50.165 162.5599 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.5mm"
+			(at 46.99 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 46.99 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 46.99 161.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "Wheel_v8.1"
+				(path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+			(project "WaterBlasterV2"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 46.99 155.575 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b8087b68-3f23-4c60-8df7-79d94b21533f")
+		(property "Reference" "H2"
+			(at 50.165 154.3049 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 50.165 156.8449 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.5mm"
+			(at 46.99 155.575 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 46.99 155.575 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 46.99 155.575 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "Wheel_v8.1"
+				(path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+			(project "WaterBlasterV2"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 46.99 167.005 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "cff52e5b-c668-4459-970a-1595a32bfacb")
+		(property "Reference" "H4"
+			(at 50.165 165.7349 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 50.165 168.2749 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.5mm"
+			(at 46.99 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 46.99 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 46.99 167.005 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "Wheel_v8.1"
+				(path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
+					(reference "H4")
+					(unit 1)
+				)
+			)
+			(project "WaterBlasterV2"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(reference "H4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole")
+		(at 46.99 149.86 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "ec2c250c-e679-4d7f-ae93-2edb7d854869")
+		(property "Reference" "H1"
+			(at 50.165 148.5899 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "MountingHole"
+			(at 50.165 151.1299 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_2.5mm"
+			(at 46.99 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 46.99 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 46.99 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(instances
+			(project "Wheel_v8.1"
+				(path "/1e1b062d-fad0-427c-a622-c5b8a80b5268"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+			(project "WaterBlasterV2"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(reference "H1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 46.99 83.82)
+		(size 43.18 20.32)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "2d7f3710-3b84-43df-8e9b-38c43e7c6f74")
+		(property "Sheetname" "PumpAndValve"
+			(at 46.99 83.1084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "PumpAndValve.kicad_sch"
+			(at 46.99 104.7246 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "ValveControl" input
+			(at 90.17 93.98 0)
+			(uuid "a5a6a9a7-00f5-438a-ac73-fdd3b97056c3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "PumpControl" input
+			(at 90.17 96.52 0)
+			(uuid "da8886de-0135-4ad0-9c30-c9ebfbba1060")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "WaterBlaster"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 119.38 41.91)
+		(size 49.53 77.47)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "2e794be7-7c66-4054-9f23-b95c8914d3e5")
+		(property "Sheetname" "MCU"
+			(at 119.38 41.1984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "MCU.kicad_sch"
+			(at 119.38 119.9646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "MISO" input
+			(at 168.91 59.69 0)
+			(uuid "af4efde7-d661-458f-a40f-03c361113fd9")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "SCK" input
+			(at 168.91 57.15 0)
+			(uuid "170f4668-b9b3-4282-8f7a-2246f2afc073")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "MOSI" input
+			(at 168.91 62.23 0)
+			(uuid "f88fa44b-57e0-438c-bff7-4cbecfed6708")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "LED4" input
+			(at 168.91 115.57 0)
+			(uuid "93cab075-55df-4363-b4de-5a1b72dfd456")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ValveControl" input
+			(at 119.38 93.98 180)
+			(uuid "7f4f3221-d2bf-454a-ad1a-4eea44a9ac14")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LED1" input
+			(at 168.91 107.95 0)
+			(uuid "df3424ea-831b-4ed3-a513-32514f77375e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "LED3" input
+			(at 168.91 113.03 0)
+			(uuid "843067de-b472-4c48-a0bf-3f30bce24bed")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Button1" input
+			(at 168.91 91.44 0)
+			(uuid "d7b0de2b-9f94-45d1-bc91-d8ad9056cedb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Button2" input
+			(at 168.91 93.98 0)
+			(uuid "2976af89-43ca-4871-a5f7-3b797d47833f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "{slash}CS" input
+			(at 168.91 54.61 0)
+			(uuid "24501e60-011c-4453-a33e-b5ce9cf736c7")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Button5" input
+			(at 168.91 101.6 0)
+			(uuid "1d8493ad-5f68-46ce-b11c-d9104e350222")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Button6" input
+			(at 168.91 104.14 0)
+			(uuid "f567a423-6337-40ca-a007-a1ff8b96a179")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "LED2" input
+			(at 168.91 110.49 0)
+			(uuid "12e420a0-57a3-4f13-ad7d-f4eee761f676")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "Button3" input
+			(at 168.91 96.52 0)
+			(uuid "3b8b3616-e5d2-4325-b818-5a16dbada3c2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "{slash}RESET" input
+			(at 168.91 64.77 0)
+			(uuid "b3ed0650-b154-42eb-8bb3-4571a190a5c5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "PumpControl" input
+			(at 119.38 96.52 180)
+			(uuid "fa640211-a014-4b04-956b-6c85d1a3e28a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button4" input
+			(at 168.91 99.06 0)
+			(uuid "5c4400d8-6600-465a-a33e-1a41816973f3")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "WaterBlaster"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 177.8 45.72)
+		(size 31.75 35.56)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "9e91a75d-ea98-42f4-b76b-2ecca5e44db4")
+		(property "Sheetname" "Display"
+			(at 177.8 45.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "Display.kicad_sch"
+			(at 177.8 81.8646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "{slash}CS" input
+			(at 177.8 54.61 180)
+			(uuid "d53c751d-febc-4c9f-afb8-97c2ca7b300d")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "{slash}RESET" input
+			(at 177.8 64.77 180)
+			(uuid "1b5eec10-1619-49e0-870f-40583750ee41")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SDO" input
+			(at 177.8 59.69 180)
+			(uuid "b986ec8e-45cd-45a1-a6d2-0fc8141fde82")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SCLK" input
+			(at 177.8 57.15 180)
+			(uuid "cb5138de-9baa-43f1-be21-1094da07f8be")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "SDI" input
+			(at 177.8 62.23 180)
+			(uuid "1f123af1-94b1-452a-ba66-14bd7f571a46")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "WaterBlaster"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 33.02 39.37)
+		(size 57.15 33.02)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "a0871260-e912-4181-a19c-a435e672fecd")
+		(property "Sheetname" "PowerProtection"
+			(at 33.02 38.6584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "PowerProtection.kicad_sch"
+			(at 33.02 72.9746 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "WaterBlaster"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 177.8 86.36)
+		(size 29.21 35.56)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "be283d61-5b8d-425d-8fd4-cb7c3f3b5cd3")
+		(property "Sheetname" "IO"
+			(at 177.8 85.6484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "IO.kicad_sch"
+			(at 177.8 122.5046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "Button3" input
+			(at 177.8 96.52 180)
+			(uuid "450b26a3-752f-450b-8c9c-b6ca5a55d218")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button4" input
+			(at 177.8 99.06 180)
+			(uuid "6dbc7cb6-5ec6-4154-85f5-c78f3b710a70")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button5" input
+			(at 177.8 101.6 180)
+			(uuid "20fcca1f-3cf1-4e2b-9f73-646c0d1acc73")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button6" input
+			(at 177.8 104.14 180)
+			(uuid "49e69df8-9e5e-4116-8034-60587594f35f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LED3" input
+			(at 177.8 113.03 180)
+			(uuid "a9b65b6f-eb8f-42aa-b86b-4de9c862244f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LED4" input
+			(at 177.8 115.57 180)
+			(uuid "60480202-23a3-447e-8983-c88b8d9d6197")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LED1" input
+			(at 177.8 107.95 180)
+			(uuid "29938f0f-fb36-49a9-a7a7-2b3297baffd0")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "LED2" input
+			(at 177.8 110.49 180)
+			(uuid "a99cdd6b-d7fa-4cdc-89e9-af60a98eb3cb")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button1" input
+			(at 177.8 91.44 180)
+			(uuid "92a9b2b6-8647-47c9-a680-d488bb0227f6")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "Button2" input
+			(at 177.8 93.98 180)
+			(uuid "87027254-1b1f-4197-a9c7-44e8e05e160c")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "WaterBlaster"
+				(path "/242ebdf6-532f-4670-aff3-22151a1a4e22"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )
