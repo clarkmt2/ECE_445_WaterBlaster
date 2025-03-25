@@ -1,0 +1,39 @@
+Developed first version of our board very early, we are unsure of mechanical implementation just yet
+
+Few ideas we have,
+Plunger, expandable ballast
+Pressurize water with resovoir
+Accumulator tank
+Normal tank with bleed valve
+
+January 31st
+Purchased parts for all of these and will use V1 to test
+
+February 20th
+Tested all of the above with the initial board (no pressure sensor so used gauge, accumulator tank
+is by far the best solution but leaks slightly
+water was so powerful it bounced off the wall and landed on the board, shorted MCU and board died
+slightly after (RIP)
+
+Ordered parts and began CAD Design, on track for everything, multiple new PCBS designed for trigger
+added step encoder to adjust menus, designed dpad and a few other things
+
+made 1 signle ocnnector to IO board - cuts the costs a significant amount.
+
+Changed to screw terminals because a ticker wire guauge was needed
+
+used 5V power for the encoder, and the pressure transducer, it paid off adding this to the board early
+new revision has pins rearranged to optimize layout and reudce total number of vias
+
+added 3 leak detection subboards that can be distributed throughout the board
+
+these boards have the GPIO with a pullup resistor, and a sensor pin, the sensors pins are interlaced
+with GND pins, the idea is that if water comes across the pins the sensor pins will drop to GND as
+the water connects it meaning our GPIO would be active low for a leak being detected. This is our
+first design for a leak sensor and we have yet to test it.
+We deicded on 3 sensors, one directly near the IO board, one directly near the fill valve, and one on
+the bottom of the enclosure for when it is hold in normal firing position. The hope is that with these 3
+locations we would get a splash of water before it would be possible to reach the microcontroller
+minimizing the possible damage to the system
+
+We also have a very basic sketch that I have attached to my notebook that shows our ideal end enclosure.
