@@ -11524,7 +11524,7 @@
 		(descr "Fuse SMD 1206 (3216 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: http://www.tortai-tech.com/upload/download/2011102023233369053.pdf), generated with kicad-footprint-generator")
 		(tags "fuse")
 		(property "Reference" "F1"
-			(at 0.127 -1.778 -90)
+			(at 0.127 -1.778 270)
 			(layer "B.SilkS")
 			(uuid "7de34405-1a0c-4c31-9e24-0cb9f6a96137")
 			(effects

@@ -1955,6 +1955,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "Add fuse on 5V here- for the V2 boards, bodged in series with the inductor on the oversized footprint - required to fuse transducer"
+		(exclude_from_sim no)
+		(at 80.772 36.83 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "31983c03-b24d-4cb3-902d-22e934093234")
+	)
 	(junction
 		(at 207.01 53.34)
 		(diameter 0)
