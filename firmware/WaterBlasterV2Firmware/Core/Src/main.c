@@ -56,7 +56,8 @@ static void MX_ADC1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+// Declare a global variable to track the last tick
+uint32_t previousTick = 0;
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +92,18 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
+  // OLED Display
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8); // set the solenoid valve as closed on power on
+  NHD_OLED_begin();
+  NHD_OLED_textClear();
+  NHD_OLED_cursorHome();
+  char* message = "Water Blaster";
+  uint8_t length = 13;
+  NHD_OLED_print_len(message, length);
+
+
   /* USER CODE END 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
@@ -100,12 +113,39 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  HAL_Delay(500);
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
-	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
-	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+	  // HAL_Delay(500);
+	  // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+	  // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
+	  // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
     /* USER CODE BEGIN 3 */
+    if (HAL_GetTick() - previousTick >= 1000) // 1000 ms = 1 second
+    {
+      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10); // Toggle the pin
+      previousTick = HAL_GetTick();           // Update the last tick
+    }
+
+    // Trigger (PA11) to control valve (PA8)
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET)
+    {
+      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9); // LED 1
+      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+      HAL_Delay(50);
+      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+    }
+    // Filler (PA1) to control pump (PB2)
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET)
+    {
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6); // LED 2
+      HAL_Delay(50);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+    }
   }
+
+
+  
   /* USER CODE END 3 */
 }
 
