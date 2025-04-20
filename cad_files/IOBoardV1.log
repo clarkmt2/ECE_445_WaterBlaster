@@ -1,0 +1,135 @@
+﻿STEP to UG
+! INFO-     NX STEP AP214 - V2306.1700
+! INFO-      
+! INFO-     Start of Translation: 18-APR-2025  7:55:30 PM
+! INFO-      
+! STATUS-   Converting Part: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\IOBoardV1.step
+! SUMMARY-   
+! SUMMARY-    STEP Header Information
+! SUMMARY-   
+! SUMMARY-  Description      KiCad electronic assembly
+! SUMMARY-  Imp_Level        2;1
+! SUMMARY-  File_Name        IOBoardV1.step
+! SUMMARY-  Date             2025-04-18T21:52:57
+! SUMMARY-  Author           Pcbnew
+! SUMMARY-  Organization     Kicad
+! SUMMARY-  Pre_Version      Open CASCADE STEP processor 7.8
+! SUMMARY-  Orig_System      KiCad to STEP converter
+! SUMMARY-  Authorization    Unknown
+! SUMMARY-  Schema_ID        automotive_design
+! SUMMARY-   
+! SUMMARY-    Summary of STEP Entities
+! SUMMARY-   
+! SUMMARY-  Entity Type                                                   Count
+! SUMMARY-  -----------                                                   ------
+! SUMMARY-  advanced_brep_shape_representation .........................:      4
+! SUMMARY-  advanced_face ..............................................:    621
+! SUMMARY-  application_context ........................................:      1
+! SUMMARY-  axis2_placement_3d .........................................:   1117
+! SUMMARY-  b_spline_curve_with_knots ..................................:     96
+! SUMMARY-  b_spline_surface_with_knots ................................:      7
+! SUMMARY-  brep_with_voids ............................................:      1
+! SUMMARY-  cartesian_point ............................................:   8549
+! SUMMARY-  circle .....................................................:    479
+! SUMMARY-  closed_shell ...............................................:      6
+! SUMMARY-  conical_surface ............................................:     14
+! SUMMARY-  context_dependent_shape_representation .....................:     24
+! SUMMARY-  cylindrical_surface ........................................:    246
+! SUMMARY-  direction ..................................................:   3355
+! SUMMARY-  edge_curve .................................................:   1694
+! SUMMARY-  edge_loop ..................................................:    688
+! SUMMARY-  face_bound .................................................:    688
+! SUMMARY-  geometric_representation_context_and_global_uncertainty_a ..:      5
+! SUMMARY-  item_defined_transformation ................................:     24
+! SUMMARY-  length_unit_and_si_unit ....................................:      5
+! SUMMARY-  line .......................................................:   1120
+! SUMMARY-  manifold_solid_brep ........................................:      3
+! SUMMARY-  next_assembly_usage_occurrence .............................:     24
+! SUMMARY-  oriented_closed_shell ......................................:      2
+! SUMMARY-  oriented_edge ..............................................:   3388
+! SUMMARY-  plane ......................................................:    329
+! SUMMARY-  plane_angle_unit_and_si_unit ...............................:      5
+! SUMMARY-  product ....................................................:      5
+! SUMMARY-  product_context ............................................:      5
+! SUMMARY-  product_definition .........................................:      5
+! SUMMARY-  product_definition_context .................................:      5
+! SUMMARY-  product_definition_formation ...............................:      5
+! SUMMARY-  product_definition_shape ...................................:     29
+! SUMMARY-  product_related_product_category ...........................:      5
+! SUMMARY-  representation_relationship_with_transformation_and_shape ..:     24
+! SUMMARY-  shape_representation .......................................:      1
+! SUMMARY-  si_unit_and_solid_angle_unit ...............................:      5
+! SUMMARY-  surface_of_linear_extrusion ................................:      1
+! SUMMARY-  toroidal_surface ...........................................:     24
+! SUMMARY-  uncertainty_measure_with_unit ..............................:      5
+! SUMMARY-  vector .....................................................:   1121
+! SUMMARY-  vertex_point ...............................................:   1104
+! SUMMARY-                                                               -------
+! SUMMARY-  Total                                                          24839
+! STATUS-    
+! STATUS-   Converting to Output Form (Phase 2 of 3): 18-APR-2025 7:55:30 PM
+! STATUS-    
+! STATUS-    
+! STATUS-   Generating UG geometry and placing them in parts
+! STATUS-    
+! STATUS-   Creating the UG part (Phase 3 of 3): 18-APR-2025  7:55:31 PM
+! INFO-     Filing Part ..: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\IOBoardV1_PCB
+! SUMMARY-   
+! SUMMARY-  Summary of Unigraphics Part Entities
+! SUMMARY-   
+! SUMMARY-  Entities Processed             Count
+! SUMMARY-  ------------------             -----
+! SUMMARY-  Solid/Sheet .................:     1
+! SUMMARY-                                 -----
+! SUMMARY-  Total                              1
+! STATUS-   Creating the UG part (Phase 3 of 3): 18-APR-2025  7:55:31 PM
+! INFO-     Filing Part ..: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\R_0603_1608Metric
+! SUMMARY-   
+! SUMMARY-  Summary of Unigraphics Part Entities
+! SUMMARY-   
+! SUMMARY-  Entities Processed             Count
+! SUMMARY-  ------------------             -----
+! SUMMARY-  Solid/Sheet .................:     1
+! SUMMARY-                                 -----
+! SUMMARY-  Total                              1
+! STATUS-   Creating the UG part (Phase 3 of 3): 18-APR-2025  7:55:31 PM
+! INFO-     Filing Part ..: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\C_0603_1608Metric
+! SUMMARY-   
+! SUMMARY-  Summary of Unigraphics Part Entities
+! SUMMARY-   
+! SUMMARY-  Entities Processed             Count
+! SUMMARY-  ------------------             -----
+! SUMMARY-  Solid/Sheet .................:     1
+! SUMMARY-                                 -----
+! SUMMARY-  Total                              1
+! STATUS-   Creating the UG part (Phase 3 of 3): 18-APR-2025  7:55:31 PM
+! INFO-     Filing Part ..: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\pec11r-4020f-s0024
+! SUMMARY-   
+! SUMMARY-  Summary of Unigraphics Part Entities
+! SUMMARY-   
+! SUMMARY-  Entities Processed             Count
+! SUMMARY-  ------------------             -----
+! SUMMARY-  Solid/Sheet .................:     1
+! SUMMARY-                                 -----
+! SUMMARY-  Total                              1
+! STATUS-   Creating the UG part (Phase 3 of 3): 18-APR-2025  7:55:32 PM
+! INFO-     Filing Part ..: C:\Users\Clark\Desktop\WaterBlaster\ECE_445_WaterBlaster\cad_files\IOBoardV1_step.prt
+! SUMMARY-   
+! SUMMARY-  Summary of Unigraphics Part Entities
+! SUMMARY-   
+! SUMMARY-  Entities Processed             Count
+! SUMMARY-  ------------------             -----
+! SUMMARY-  Component ...................:    24
+! SUMMARY-                                 -----
+! SUMMARY-  Total                             24
+! INFO-      
+! INFO-     Total number of solids input for this translation       :         4
+! INFO-      
+! INFO-     Number of solids created without body validation faults :         4
+! INFO-      
+! INFO-     Number of solids created with body validation fault(s)  :         0
+! INFO-      
+! INFO-     Number of solids ending up as sheet bodies              :         0
+! INFO-      
+! INFO-     End of Translation: 18-APR-2025  7:55:33 PM
+! INFO-      
