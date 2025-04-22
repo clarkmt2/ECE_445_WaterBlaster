@@ -1,24 +1,26 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 #include "newhaven_slim_oled.h"
+
 #include "NHD_2066.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -44,8 +46,6 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
-
-
 int read_pressure_psi(void) {
     HAL_ADC_Start(&hadc1);
 
@@ -67,8 +67,124 @@ int read_pressure_psi(void) {
     else
         return (int)(pressure - 0.5f);
 }
-
 /* USER CODE BEGIN PV */
+static uint8_t last_encoded = 0;
+
+int read_encoder_delta(void) {
+    static uint8_t last_state = 0;
+    static int8_t delta_accumulator = 0;
+
+    uint8_t a = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
+    uint8_t b = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3);
+
+    uint8_t new_state = (a << 1) | b;
+
+    // Only act if state actually changed
+    if (new_state != last_state) {
+        // Combine old and new state into 4-bit transition code
+        uint8_t transition = (last_state << 2) | new_state;
+        last_state = new_state;
+
+        // Decode direction
+        switch (transition) {
+            case 0b0001:
+            case 0b0111:
+            case 0b1110:
+            case 0b1000:
+                delta_accumulator++;
+                break;
+
+            case 0b0010:
+            case 0b1011:
+            case 0b1101:
+            case 0b0100:
+                delta_accumulator--;
+                break;
+
+            default:
+                // Illegal transition or bounce; ignore
+                break;
+        }
+
+        // Return ±1 only when 4 steps in one direction accumulated
+        if (delta_accumulator >= 4) {
+            delta_accumulator = 0;
+            return 1;
+        } else if (delta_accumulator <= -4) {
+            delta_accumulator = 0;
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+
+char OLED[4][20];
+char Buffer[4][20]; // staging buffer to write to
+
+void clear_buffer(void) {
+    for (int row = 0; row < 4; row++) {
+        memset(Buffer[row], ' ', 20);
+    }
+}
+
+
+
+
+void update_display_chunks(char Buffer[4][20]) {
+    for (uint8_t row = 0; row < 4; row++) {
+        uint32_t *oled_row = (uint32_t *)OLED[row];
+        uint32_t *buf_row  = (uint32_t *)Buffer[row];
+
+        for (uint8_t chunk = 0; chunk < 5; chunk++) { // 20 chars / 4 = 5 chunks
+            if (oled_row[chunk] != buf_row[chunk]) {
+                // There's a difference in this chunk — do per-char check
+                uint8_t base_col = chunk * 4;
+
+                for (uint8_t offset = 0; offset < 4; offset++) {
+                    uint8_t col = base_col + offset;
+                    if (Buffer[row][col] != OLED[row][col]) {
+                        NHD_OLED_cursorPos(row, col);
+                        NHD_OLED_sendData(Buffer[row][col]);
+                        OLED[row][col] = Buffer[row][col];
+                        Buffer[row][col] = 0x20;
+                    }
+                }
+            }
+        }
+    }
+    clear_buffer();
+}
+
+
+void pad_center(char dst[20], const char *src) {
+    int len = strlen(src);
+    if (len > 20) len = 20;
+
+    int pad_left = (20 - len) / 2;
+    int pad_right = 20 - len - pad_left;
+
+    memset(dst, ' ', 20);
+    memcpy(dst + pad_left, src, len);
+}
+
+void pad_right_20(char dst[20], const char *src) {
+    int len = strlen(src);
+    if (len > 20) len = 20;
+
+    memset(dst, ' ', 20);
+    memcpy(dst + (20 - len), src, len);
+}
+
+void pad_left_20(char dst[20], const char *src) {
+    int len = strlen(src);
+    if (len > 20) len = 20;
+
+    memcpy(dst, src, len);
+    if (len < 20)
+        memset(dst + len, ' ', 20 - len);
+}
 
 /* USER CODE END PV */
 
@@ -83,338 +199,431 @@ static void MX_ADC1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // Declare a global variable to track the last tick
-uint32_t previousTick = 0;
+/*
+ *
+ *
+ 0 = home page
+ 1 = settings for shot length
+ *
+ */
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
+    uint32_t previousTick = 0;
+    uint32_t lastPressureUpdate = 0;
+    static int last_pressure_value = -1;
 
-  /* USER CODE BEGIN 1 */
+    int shots = 0;
+    int page = 0;
+    int shot_length = 1000;
+    int shot_max = 10000;
+    int shot_min = 20;
+    int pressed = 0;
+    int ignore_shots_remaining = 1;
+    char message[20];
+    static uint8_t refill_button_was_down = 0;
+    uint8_t length;
 
-  /* USER CODE END 1 */
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_ADC1_Init();
+    HAL_ADC_Start(&hadc1);
 
-  /* MCU Configuration--------------------------------------------------------*/
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+    HAL_Delay(500);
+    NHD_OLED_begin();
+    NHD_OLED_textClear();
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // Valve CLOSED on startup
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
 
-  /* USER CODE BEGIN Init */
+    while (1) {
+        if (!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4)) {
+            if (pressed != 1) {
+                page = (page == 0) ? 1 : 0;
+                clear_buffer();
+                update_display_chunks(Buffer);
+                pressed = 1;
+            }
+        } else {
+            pressed = 0;
+        }
 
-  /* USER CODE END Init */
+        clear_buffer();
 
-  /* Configure the system clock */
-  SystemClock_Config();
+        if (page == 0) {
+            pad_center(Buffer[0], "Home Page");
 
-  /* USER CODE BEGIN SysInit */
+            if (HAL_GetTick() - lastPressureUpdate >= 250) {
+                last_pressure_value = read_pressure_psi();
+                lastPressureUpdate = HAL_GetTick();
+            }
 
-  /* USER CODE END SysInit */
+            snprintf(message, sizeof(message), "%d PSI", last_pressure_value);
+            pad_center(Buffer[1], message);
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  /* USER CODE BEGIN 2 */
+            snprintf(message, sizeof(message), "Shots Remaining: %d", shots);
+            pad_center(Buffer[2], message);
+
+            if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET) {
+                if (shots > 0 || ignore_shots_remaining) {
+                    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
+                    HAL_Delay(shot_length);
+                    shots--;
+                    if (shots < 0) shots = 0;
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+                    HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+                } else {
+                    pad_center(Buffer[3], "Out of Shots!");
+                    update_display_chunks(Buffer);
+                    HAL_Delay(1500);
+                    clear_buffer();
+                }
+            }
+
+            uint8_t refill_button = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
+            if (refill_button == GPIO_PIN_RESET && !refill_button_was_down) {
+                refill_button_was_down = 1;
+
+                int cancelled = 0;
+                int refill_button_was_released = 0;
+                int current_psi = read_pressure_psi();
+
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // open valve
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);   // pump on
+                HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);   // LED on
+
+                pad_center(Buffer[3], "Refill: Valve Open");
+                snprintf(message, sizeof(message), "%d PSI", current_psi);
+                pad_center(Buffer[1], message);
+                update_display_chunks(Buffer);
+
+                while (1) {
+                    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
+                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                        cancelled = 1;
+                        break;
+                    }
+                    current_psi = read_pressure_psi();
+                    pad_center(Buffer[3], "Refill: Valve Open");
+                    snprintf(message, sizeof(message), "%d PSI", current_psi);
+                    pad_center(Buffer[1], message);
+                    update_display_chunks(Buffer);
+                    if (current_psi >= 12) {
+                        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // close valve immediately
+                        pad_center(Buffer[3], "Refill: Valve Shut");
+                        snprintf(message, sizeof(message), "%d PSI", current_psi);
+                        pad_center(Buffer[1], message);
+                        update_display_chunks(Buffer);
+                        break;
+                    }
+                    HAL_Delay(100);
+                }
+
+                while (!cancelled && current_psi < 70) {
+                    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
+                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                        cancelled = 1;
+                        break;
+                    }
+                    current_psi = read_pressure_psi();
+                    pad_center(Buffer[3], "Refill: Charging");
+                    snprintf(message, sizeof(message), "%d PSI", current_psi);
+                    pad_center(Buffer[1], message);
+                    update_display_chunks(Buffer);
+                    HAL_Delay(100);
+                }
+
+                if (!cancelled) {
+                    pad_center(Buffer[3], "Refill: Final Boost");
+                    update_display_chunks(Buffer);
+                    uint32_t end_time = HAL_GetTick() + 5000;
+                    while (HAL_GetTick() < end_time) {
+                        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
+                        if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                            cancelled = 1;
+                            break;
+                        }
+                        current_psi = read_pressure_psi();
+                        snprintf(message, sizeof(message), "%d PSI", current_psi);
+                        pad_center(Buffer[1], message);
+                        update_display_chunks(Buffer);
+                        HAL_Delay(100);
+                    }
+                }
+
+                // Always close the valve after refill attempt
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);  // pump off
+                HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);  // LED off
+
+                if (cancelled) pad_center(Buffer[3], "Refill: Cancelled");
+                else pad_center(Buffer[3], "Refill: Complete");
+
+                snprintf(message, sizeof(message), "%d PSI", current_psi);
+                pad_center(Buffer[1], message);
+                update_display_chunks(Buffer);
+
+                if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) {
+                    refill_button_was_down = 0;
+                }
+            }
+
+            if (refill_button == GPIO_PIN_SET) refill_button_was_down = 0;
+
+            if (HAL_GetTick() - previousTick >= 1000) {
+                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
+                previousTick = HAL_GetTick();
+            }
+
+            update_display_chunks(Buffer);
+        }
+
+        if (page == 1) {
+            pad_center(Buffer[0], "Settings: Shot Power");
+            snprintf(message, sizeof(message), "Min: %d, Max: %d", shot_min, shot_max);
+            pad_left_20(Buffer[1], message);
+            snprintf(message, sizeof(message), "Current Level: %d", shot_length);
+            pad_left_20(Buffer[2], message);
+            update_display_chunks(Buffer);
+
+            while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4)) {
+                int delta = read_encoder_delta();
+                if (delta != 0) {
+                    shot_length += delta * 20;
+                    if (shot_length < shot_min) shot_length = shot_min;
+                    if (shot_length > shot_max) shot_length = shot_max;
+                    snprintf(message, sizeof(message), "Current Level: %d", shot_length);
+                    pad_left_20(Buffer[2], message);
+                    update_display_chunks(Buffer);
+                }
+                HAL_Delay(1);
+            }
+
+            page = 0;
+            clear_buffer();
+            update_display_chunks(Buffer);
+            pressed = 1;
+        }
+    }
+}
 
 
-  uint32_t adc_raw_value = 0;
-  float voltage = 0.0;
 
-  // Start ADC
-  HAL_ADC_Start(&hadc1);
+    /**
+     * @brief System Clock Configuration
+     * @retval None
+     */
+    void SystemClock_Config(void) {
+      RCC_OscInitTypeDef RCC_OscInitStruct = {
+        0
+      };
+      RCC_ClkInitTypeDef RCC_ClkInitStruct = {
+        0
+      };
 
+      /** Configure the main internal regulator output voltage
+       */
+      HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
 
+      /** Initializes the RCC Oscillators according to the specified parameters
+       * in the RCC_OscInitTypeDef structure.
+       */
+      RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+      RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+      RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
+      RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+      RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+      if (HAL_RCC_OscConfig( & RCC_OscInitStruct) != HAL_OK) {
+        Error_Handler();
+      }
 
+      /** Initializes the CPU, AHB and APB buses clocks
+       */
+      RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
+        RCC_CLOCKTYPE_PCLK1;
+      RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+      RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+      RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-  // OLED Display
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-//  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8); // set the solenoid valve as closed on power o
-  HAL_Delay(500);
-  NHD_OLED_begin();
-  NHD_OLED_textClear();
-  NHD_OLED_cursorHome();
-  char* message = "Water Blaster";
-  uint8_t length = 13;
-  NHD_OLED_print_len(message, length);
-
-
-
-
-  /* USER CODE END 2 */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  uint32_t last_toggle = 0;
-  uint8_t show_update = 0;  // use 0 or 1 instead of bool
-
-  while (1)
-  {
-      HAL_Delay(200);
-
-      // Read pressure in PSI
-      int pressure = read_pressure_psi();
-
-      // Format the message string
-      char message[48];
-      snprintf(message, sizeof(message), "%d PSI", pressure);
-
-      // Display message
-      NHD_OLED_cursorMoveToRow(1);
-      NHD_OLED_textClearRow(1);
-      NHD_OLED_cursorMoveToRow(1);
-      uint8_t length = strlen(message);
-      NHD_OLED_print_len((uint8_t*)message, length);
-
-
-
-
-
-    if (HAL_GetTick() - previousTick >= 1000) // 1000 ms = 1 second
-    {
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10); // Toggle the pin
-      previousTick = HAL_GetTick();           // Update the last tick
+      if (HAL_RCC_ClockConfig( & RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK) {
+        Error_Handler();
+      }
     }
 
-    // Trigger (PA11) to control valve (PA8)
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET)
-    {
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9); // LED 1
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-      HAL_Delay(50);
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-      HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+    /**
+     * @brief ADC1 Initialization Function
+     * @param None
+     * @retval None
+     */
+    static void MX_ADC1_Init(void) {
+
+      /* USER CODE BEGIN ADC1_Init 0 */
+
+      /* USER CODE END ADC1_Init 0 */
+
+      ADC_ChannelConfTypeDef sConfig = {
+        0
+      };
+
+      /* USER CODE BEGIN ADC1_Init 1 */
+
+      /* USER CODE END ADC1_Init 1 */
+
+      /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+       */
+      hadc1.Instance = ADC1;
+      hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+      hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+      hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+      hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+      hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+      hadc1.Init.LowPowerAutoWait = DISABLE;
+      hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+      hadc1.Init.ContinuousConvMode = DISABLE;
+      hadc1.Init.NbrOfConversion = 1;
+      hadc1.Init.DiscontinuousConvMode = DISABLE;
+      hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+      hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+      hadc1.Init.DMAContinuousRequests = DISABLE;
+      hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+      hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
+      hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
+      hadc1.Init.OversamplingMode = DISABLE;
+      hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+      if (HAL_ADC_Init( & hadc1) != HAL_OK) {
+        Error_Handler();
+      }
+
+      /** Configure Regular Channel
+       */
+      sConfig.Channel = ADC_CHANNEL_0;
+      sConfig.Rank = ADC_REGULAR_RANK_1;
+      sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+      if (HAL_ADC_ConfigChannel( & hadc1, & sConfig) != HAL_OK) {
+        Error_Handler();
+      }
+      /* USER CODE BEGIN ADC1_Init 2 */
+
+      /* USER CODE END ADC1_Init 2 */
+
     }
-    // Filler (PA1) to control pump (PB2)
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET)
-    {
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
-      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6); // LED 2
-      HAL_Delay(50);
-      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
-      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+
+    /**
+     * @brief GPIO Initialization Function
+     * @param None
+     * @retval None
+     */
+    static void MX_GPIO_Init(void) {
+      GPIO_InitTypeDef GPIO_InitStruct = {
+        0
+      };
+      /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+      /* USER CODE END MX_GPIO_Init_1 */
+
+      /* GPIO Ports Clock Enable */
+      __HAL_RCC_GPIOB_CLK_ENABLE();
+      __HAL_RCC_GPIOC_CLK_ENABLE();
+      __HAL_RCC_GPIOA_CLK_ENABLE();
+
+      /*Configure GPIO pin Output Level */
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_8 | GPIO_PIN_9 |
+        GPIO_PIN_10 | GPIO_PIN_12, GPIO_PIN_RESET);
+
+      /*Configure GPIO pin Output Level */
+      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2, GPIO_PIN_RESET);
+
+      /*Configure GPIO pin Output Level */
+      HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+
+      /*Configure GPIO pins : PB9 PB3 PB4 PB5
+                               PB6 PB7 PB8 */
+      GPIO_InitStruct.Pin = GPIO_PIN_9 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 |
+        GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8;
+      GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      HAL_GPIO_Init(GPIOB, & GPIO_InitStruct);
+
+      /*Configure GPIO pins : PC14 PC15 */
+      GPIO_InitStruct.Pin = GPIO_PIN_14 | GPIO_PIN_15;
+      GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      HAL_GPIO_Init(GPIOC, & GPIO_InitStruct);
+
+      /*Configure GPIO pins : PA1 PA2 PA3 PA4
+                               PA7 PA11 PA15 */
+      GPIO_InitStruct.Pin = GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_6 |
+        GPIO_PIN_11 | GPIO_PIN_15;
+      GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      HAL_GPIO_Init(GPIOA, & GPIO_InitStruct);
+
+      /*Configure GPIO pins : PA5 PA6 PA8 PA9
+                               PA10 PA12 */
+      GPIO_InitStruct.Pin = GPIO_PIN_5 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 |
+        GPIO_PIN_10 | GPIO_PIN_12;
+      GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+      HAL_GPIO_Init(GPIOA, & GPIO_InitStruct);
+
+      /*Configure GPIO pins : PB0 PB1 PB2 */
+      GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2;
+      GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+      HAL_GPIO_Init(GPIOB, & GPIO_InitStruct);
+
+      /*Configure GPIO pin : PC6 */
+      GPIO_InitStruct.Pin = GPIO_PIN_6;
+      GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+      GPIO_InitStruct.Pull = GPIO_NOPULL;
+      GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+      HAL_GPIO_Init(GPIOC, & GPIO_InitStruct);
+
+      /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+      /* USER CODE END MX_GPIO_Init_2 */
     }
 
-  }
+    /* USER CODE BEGIN 4 */
 
+    /* USER CODE END 4 */
 
-  
-  /* USER CODE END 3 */
-}
+    /**
+     * @brief  This function is executed in case of error occurrence.
+     * @retval None
+     */
+    void Error_Handler(void) {
+      /* USER CODE BEGIN Error_Handler_Debug */
+      /* User can add his own implementation to report the HAL error return state */
+      __disable_irq();
+      while (1) {}
+      /* USER CODE END Error_Handler_Debug */
+    }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-  /** Configure the main internal regulator output voltage
-  */
-  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
-
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-}
-
-/**
-  * @brief ADC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ADC1_Init(void)
-{
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
-  */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
-  hadc1.Init.OversamplingMode = DISABLE;
-  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Regular Channel
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  /* USER CODE BEGIN MX_GPIO_Init_1 */
-
-  /* USER CODE END MX_GPIO_Init_1 */
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_9
-                          |GPIO_PIN_10|GPIO_PIN_12, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : PB9 PB3 PB4 PB5
-                           PB6 PB7 PB8 */
-  GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
-                          |GPIO_PIN_6|GPIO_PIN_7|GPIO_PIN_8;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PC14 PC15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA1 PA2 PA3 PA4
-                           PA7 PA11 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_6
-                          |GPIO_PIN_11|GPIO_PIN_15;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PA5 PA6 PA8 PA9
-                           PA10 PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9
-                          |GPIO_PIN_10|GPIO_PIN_12;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : PB0 PB1 PB2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PC6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN MX_GPIO_Init_2 */
-
-  /* USER CODE END MX_GPIO_Init_2 */
-}
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
-}
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
+    #ifdef USE_FULL_ASSERT
+    /**
+     * @brief  Reports the name of the source file and the source line number
+     *         where the assert_param error has occurred.
+     * @param  file: pointer to the source file name
+     * @param  line: assert_param error line source number
+     * @retval None
+     */
+    void assert_failed(uint8_t * file, uint32_t line) {
+      /* USER CODE BEGIN 6 */
+      /* User can add his own implementation to report the file name and line number,
+         ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+      /* USER CODE END 6 */
+    }
+    #endif /* USE_FULL_ASSERT */
