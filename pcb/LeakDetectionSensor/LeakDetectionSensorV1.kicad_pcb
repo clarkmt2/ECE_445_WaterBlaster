@@ -983,6 +983,17 @@
 				(xyz 0 0 0)
 			)
 		)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/436500315.stp"
+			(offset
+				(xyz 3 2 10)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -180)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
 		(layer "F.Cu")

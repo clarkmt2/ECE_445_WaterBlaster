@@ -8999,6 +8999,17 @@
 			(uuid "d64afa55-6e2e-4b5c-9a22-a08878080bb8")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/436501215.stp"
+			(offset
+				(xyz 0 -2 9.5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(footprint "LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder"
 		(layer "F.Cu")

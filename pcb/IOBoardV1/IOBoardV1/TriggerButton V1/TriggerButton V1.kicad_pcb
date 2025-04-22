@@ -533,7 +533,7 @@
 			)
 		)
 		(fp_text user "*"
-			(at -4.1021 -2.8 -0)
+			(at -4.1021 -2.8 0)
 			(layer "B.SilkS")
 			(uuid "0314e0a5-efbc-46a1-b751-20a74c4466ef")
 			(effects
@@ -1619,6 +1619,17 @@
 			(uuid "d498b07e-978f-4e0b-a5da-7769970e127b")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/436500227.stp"
+			(offset
+				(xyz -1.5 -2 10)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(gr_rect
 		(start 112.6 89.4)

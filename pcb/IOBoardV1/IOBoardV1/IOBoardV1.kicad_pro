@@ -488,7 +488,7 @@
       "plot": "IOBoardV1Gerbers",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "IOBoardV1.step",
       "svg": "",
       "vrml": ""
     },

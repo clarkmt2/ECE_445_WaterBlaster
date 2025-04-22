@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "newhaven_slim_oled.h"
+#include "NHD_2066.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -41,6 +43,30 @@
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
+
+
+
+int read_pressure_psi(void) {
+    HAL_ADC_Start(&hadc1);
+
+    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) != HAL_OK) {
+        return -1;
+    }
+
+    uint32_t adc_raw_value = HAL_ADC_GetValue(&hadc1);
+    float voltage = ((adc_raw_value * 3.3f) / 4095.0f) * 2.0f;
+
+    if (voltage < 0.7f) voltage = 0.7f;
+    if (voltage > 4.5f) voltage = 4.5f;
+
+    float pressure = ((voltage - 0.7f) / 3.8f) * 150.0f;
+
+    // Proper rounding for both positive and negative values
+    if (pressure >= 0.0f)
+        return (int)(pressure + 0.5f);
+    else
+        return (int)(pressure - 0.5f);
+}
 
 /* USER CODE BEGIN PV */
 
@@ -92,10 +118,21 @@ int main(void)
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 
+
+  uint32_t adc_raw_value = 0;
+  float voltage = 0.0;
+
+  // Start ADC
+  HAL_ADC_Start(&hadc1);
+
+
+
+
   // OLED Display
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8); // set the solenoid valve as closed on power on
+//  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8); // set the solenoid valve as closed on power o
+  HAL_Delay(500);
   NHD_OLED_begin();
   NHD_OLED_textClear();
   NHD_OLED_cursorHome();
@@ -104,20 +141,40 @@ int main(void)
   NHD_OLED_print_len(message, length);
 
 
+
+
   /* USER CODE END 2 */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t last_toggle = 0;
+  uint8_t show_update = 0;  // use 0 or 1 instead of bool
+
   while (1)
   {
-    /* USER CODE END WHILE */
-	  // HAL_Delay(500);
-	  // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
-	  // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10);
-	  // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
-    /* USER CODE BEGIN 3 */
+      HAL_Delay(200);
+
+      // Read pressure in PSI
+      int pressure = read_pressure_psi();
+
+      // Format the message string
+      char message[48];
+      snprintf(message, sizeof(message), "%d PSI", pressure);
+
+      // Display message
+      NHD_OLED_cursorMoveToRow(1);
+      NHD_OLED_textClearRow(1);
+      NHD_OLED_cursorMoveToRow(1);
+      uint8_t length = strlen(message);
+      NHD_OLED_print_len((uint8_t*)message, length);
+
+
+
+
+
     if (HAL_GetTick() - previousTick >= 1000) // 1000 ms = 1 second
     {
       HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_10); // Toggle the pin
@@ -142,6 +199,7 @@ int main(void)
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
       HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
     }
+
   }
 
 
@@ -291,15 +349,15 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : PA1 PA2 PA3 PA4
                            PA7 PA11 PA15 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4
-                          |GPIO_PIN_7|GPIO_PIN_11|GPIO_PIN_15;
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_6
+                          |GPIO_PIN_11|GPIO_PIN_15;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA5 PA6 PA8 PA9
                            PA10 PA12 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_8|GPIO_PIN_9
+  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_7|GPIO_PIN_8|GPIO_PIN_9
                           |GPIO_PIN_10|GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
