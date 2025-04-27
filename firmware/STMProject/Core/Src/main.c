@@ -103,6 +103,8 @@ int main(void)
    */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+//  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8); // set the solenoid valve as closed on power on
+  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9); // set the solenoid valve as closed on power on
   NHD_OLED_begin();
   NHD_OLED_textClear();
   NHD_OLED_cursorHome();
@@ -123,11 +125,29 @@ int main(void)
 	{
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
 	  HAL_Delay(50);
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+	}
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_RESET)
+	{
 	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+	  HAL_Delay(50);
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+	}
+	if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET)
+	{
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+	  HAL_Delay(50);
+	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2);
+	  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
 	}
 	}
   /* USER CODE END 3 */
