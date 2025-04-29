@@ -21,7 +21,7 @@
 
 #include "newhaven_slim_oled.h"
 
-
+    int use_sensors = 0;
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -215,7 +215,43 @@ void enter_emergency_shutdown(void) {
     NVIC_SystemReset();
 }
 
+void monitor_status(void) {
+	int current_psi = read_pressure_psi();
+	if(use_sensors == 1){
+		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_RESET || current_psi > 125){
 
+
+		// Immediately stop everything
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // pump off
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // LED1 off
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET); // LED2 off
+		HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // LED3 off
+
+		clear_buffer();
+		pad_center(Buffer[1], "!! LEAK DETECTED !!");
+		pad_center(Buffer[2], "Shutdown.");
+		update_display_chunks(Buffer);
+
+		uint32_t shutdown_start = HAL_GetTick();
+
+		while (HAL_GetTick() - shutdown_start < 5000) {
+			HAL_Delay(10); // Wait quietly for 5 seconds
+		}
+
+		NHD_OLED_displayOff(); // Turn off OLED after 5 sec
+
+		// Now sit here doing nothing until a reset button (e.g., PB3) is pressed
+		while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == GPIO_PIN_SET) {
+			// Waiting for PB3 to be pressed
+			HAL_Delay(10);
+		}
+
+		// Optionally: Hard reset microcontroller when button is pressed
+		NVIC_SystemReset();
+		}
+	}
+}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -253,11 +289,23 @@ int main(void) {
     int shot_max = 10000;
     int shot_min = 20;
     int pressed = 0;
+    int fire_type = 0;
     int ignore_shots_remaining = 1;
     char message[20];
     static uint8_t refill_button_was_down = 0;
     uint8_t length;
 	static uint8_t emergency_previous = 1;
+	const char *settings_options[] = {
+	    "Shot Length",
+	    "Firing Mode",
+	    "Drain Tank",
+	    "Safety Monitoring",
+		"Fire Bypass"
+	};
+	const int settings_count = sizeof(settings_options) / sizeof(settings_options[0]);
+
+	int settings_selection = 0;   // Which item is selected (0 to 5)
+	int settings_scroll = 0;      // Topmost visible option index
 
 
     HAL_Init();
@@ -314,10 +362,10 @@ int main(void) {
             power_pressed = 1;
         } else {
             power_pressed = 0;
+        	if(page == 100) continue;
 
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
-				enter_emergency_shutdown();
-			}
+			monitor_status();
+
 
 			if (!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)) {
 				if (pressed != 1) {
@@ -344,23 +392,77 @@ int main(void) {
 				snprintf(message, sizeof(message), "Shots Remaining: %d", shots);
 				pad_center(Buffer[2], message);
 
+				// trigger
 				if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET) {
-					if (shots > 0 || ignore_shots_remaining) {
-						HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
-						HAL_Delay(shot_length);
-						shots--;
-						if (shots < 0) shots = 0;
-						HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
-						HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
-					} else {
-						pad_center(Buffer[3], "Out of Shots!");
-						update_display_chunks(Buffer);
-						HAL_Delay(1500);
-						pad_center(Buffer[3], " ");
+				    switch (fire_type) {
+				        case 0: // Single Shot
+				            if (shots > 0 || ignore_shots_remaining) {
+				                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+				                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
+				                pad_center(Buffer[3], "Firing");
+				                update_display_chunks(Buffer);
+				                HAL_Delay(shot_length);
+				                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+				                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+				                pad_center(Buffer[3], "Shot Fired");
+				                update_display_chunks(Buffer);
+				                shots--;
+				                if (shots < 0) shots = 0;
+				            } else {
+				                pad_center(Buffer[3], "Out of Shots!");
+				                update_display_chunks(Buffer);
+				                HAL_Delay(1500);
+				                pad_center(Buffer[3], " ");
+				            }
+				            break;
 
-					}
+				        case 1: // Burst Fire (3 shots)
+				            for (int i = 0; i < 3; i++) {
+				                if (shots <= 0 && !ignore_shots_remaining) break;
+				                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+				                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
+				                pad_center(Buffer[3], "Burst Shot");
+				                update_display_chunks(Buffer);
+				                HAL_Delay(shot_length);
+				                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+				                HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+				                shots--;
+				                if (shots < 0) shots = 0;
+				                HAL_Delay(100); // delay between burst shots
+				            }
+				            pad_center(Buffer[3], "Burst Done");
+				            update_display_chunks(Buffer);
+				            break;
+
+				        case 2: // Stream (hold until trigger released)
+				            pad_center(Buffer[3], "Streaming...");
+				            update_display_chunks(Buffer);
+
+				            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+				            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
+
+				            while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET) {
+				                if (shots <= 0 && !ignore_shots_remaining) break;
+				                HAL_Delay(10); // short loop delay
+				                // optionally update shots/time/pressure live here
+				            }
+
+				            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+				            HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_9);
+
+				            pad_center(Buffer[3], "Stream Ended");
+				            update_display_chunks(Buffer);
+
+				            if (!ignore_shots_remaining) {
+				                // Estimate how many shots to deduct based on time
+				                // (Optional improvement: measure real time instead of guessing)
+				                shots--;
+				                if (shots < 0) shots = 0;
+				            }
+				            break;
+				    }
 				}
+
 
 				uint8_t refill_button = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
 				if (refill_button == GPIO_PIN_RESET && !refill_button_was_down) {
@@ -380,9 +482,8 @@ int main(void) {
 					update_display_chunks(Buffer);
 
 					while (1) {
-						if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
-							enter_emergency_shutdown();
-						}
+						monitor_status();
+
 						if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) refill_button_was_released = 1;
 						if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
 							cancelled = 1;
@@ -405,9 +506,7 @@ int main(void) {
 					}
 
 					while (!cancelled && current_psi < 70) {
-						if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
-							enter_emergency_shutdown();
-						}
+						monitor_status();
 						if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) refill_button_was_released = 1;
 						if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
 							cancelled = 1;
@@ -422,9 +521,7 @@ int main(void) {
 					}
 
 					if (!cancelled) {
-						if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
-							enter_emergency_shutdown();
-						}
+						monitor_status();
 						pad_center(Buffer[3], "Refill: Final Boost");
 						update_display_chunks(Buffer);
 						uint32_t end_time = HAL_GetTick() + 5000;
@@ -468,8 +565,85 @@ int main(void) {
 
 				update_display_chunks(Buffer);
 			}
-
 			if (page == 1) {
+			    pad_center(Buffer[0], "Settings");
+
+			    while (1) {  // Stay here until button press
+			        // Fill Buffer
+			        for (int i = 0; i < 3; i++) {
+			            int option_idx = settings_scroll + i;
+			            if (option_idx < settings_count) {
+			                if (option_idx == settings_selection) {
+			                    char temp[20];
+			                    snprintf(temp, sizeof(temp), ">%s", settings_options[option_idx]);
+			                    pad_left_20(Buffer[i + 1], temp);
+			                } else {
+			                    pad_left_20(Buffer[i + 1], settings_options[option_idx]);
+			                }
+			            } else {
+			                pad_left_20(Buffer[i + 1], "");
+			            }
+			        }
+
+			        update_display_chunks(Buffer);
+
+			        // Handle emergency
+					monitor_status();
+
+			        // Handle encoder rotation
+			        int delta = read_encoder_delta();
+			        if (delta != 0) {
+			            settings_selection += delta * -1;
+
+			            if (settings_selection < 0) settings_selection = 0;
+			            if (settings_selection >= settings_count) settings_selection = settings_count - 1;
+
+			            if (settings_selection < settings_scroll) {
+			                settings_scroll = settings_selection;
+			            }
+			            else if (settings_selection >= settings_scroll + 3) {
+			                settings_scroll = settings_selection - 2;
+			                if (settings_scroll > settings_count - 3) {
+			                    settings_scroll = settings_count - 3;
+			                    if (settings_scroll < 0) settings_scroll = 0;
+			                }
+			            }
+
+//			            clear_buffer();
+			        }
+
+			        // ======= Button handling: (THIS IS THE IMPORTANT PART) =======
+
+			        // PA4 pressed (encoder button) → select setting
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_RESET && pressed == 0) {
+			            pressed = 1;
+			            page = settings_selection + 2; // Enter selected setting page
+			            break;
+			        }
+
+			        // PB5 pressed (exit button) → go back to home
+			        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_RESET && pressed == 0) {
+			            pressed = 1;
+			            page = 0; // Back to Home Page
+			            break;
+			        }
+
+			        // Debounce release
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_SET) {
+			            pressed = 0;
+			        }
+
+			        HAL_Delay(1);
+			    }
+
+			    clear_buffer();
+			    update_display_chunks(Buffer);
+			}
+
+
+
+
+			if (page == 2) {
 				pad_center(Buffer[0], "Settings: Shot Power");
 				snprintf(message, sizeof(message), "Min: %d, Max: %d", shot_min, shot_max);
 				pad_left_20(Buffer[1], message);
@@ -477,13 +651,11 @@ int main(void) {
 				pad_left_20(Buffer[2], message);
 				update_display_chunks(Buffer);
 
-				while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) || pressed == 1) {
-					if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5) == GPIO_PIN_SET){
+				while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) || pressed == 1) {
+					if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET){
 						pressed = 0;
 					}
-					if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
-						enter_emergency_shutdown();
-					}
+					monitor_status();
 					int delta = read_encoder_delta();
 					if (delta != 0) {
 						shot_length += delta * 20 * -1;
@@ -496,11 +668,128 @@ int main(void) {
 					HAL_Delay(1);
 				}
 
-				page = 0;
+				page = 1;
 				clear_buffer();
 				update_display_chunks(Buffer);
 				pressed = 1;
 			}
+			if (page == 3) {
+			    const char *fire_modes[] = { "Single", "Burst", "Stream" };
+			    const int fire_mode_count = sizeof(fire_modes) / sizeof(fire_modes[0]);
+
+			    pad_center(Buffer[0], "Settings: Firing Mode");
+			    snprintf(message, sizeof(message), "Mode: %s", fire_modes[fire_type]);
+			    pad_center(Buffer[2], message);
+			    update_display_chunks(Buffer);
+
+			    while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) || pressed == 1) {
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET) {
+			            pressed = 0;
+			        }
+
+					monitor_status();
+
+
+			        int delta = read_encoder_delta();
+			        if (delta != 0) {
+			            fire_type += delta * -1;
+
+			            // Wrap within 0 to fire_mode_count - 1
+			            if (fire_type < 0) fire_type = 0;
+			            if (fire_type >= fire_mode_count) fire_type = fire_mode_count - 1;
+
+			            snprintf(message, sizeof(message), "Mode: %s", fire_modes[fire_type]);
+			            pad_center(Buffer[2], message);
+			            update_display_chunks(Buffer);
+			        }
+
+			        HAL_Delay(1);
+			    }
+
+			    page = 1;
+			    clear_buffer();
+			    update_display_chunks(Buffer);
+			    pressed = 1;
+			}
+			if (page == 5) {
+			    const char *sensor_options[] = { "Disabled", "Enabled" };
+			    const int sensor_option_count = sizeof(sensor_options) / sizeof(sensor_options[0]);
+
+			    pad_center(Buffer[0], "Settings: Sensors");
+			    snprintf(message, sizeof(message), "Status: %s", sensor_options[use_sensors]);
+			    pad_center(Buffer[2], message);
+			    update_display_chunks(Buffer);
+
+			    while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) || pressed == 1) {
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET) {
+			            pressed = 0;
+			        }
+
+			        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+			            enter_emergency_shutdown();
+			        }
+
+			        int delta = read_encoder_delta();
+			        if (delta != 0) {
+			            use_sensors += delta * -1;
+
+			            // Clamp between 0 and 1
+			            if (use_sensors < 0) use_sensors = 0;
+			            if (use_sensors > 1) use_sensors = 1;
+
+			            snprintf(message, sizeof(message), "Status: %s", sensor_options[use_sensors]);
+			            pad_center(Buffer[2], message);
+			            update_display_chunks(Buffer);
+			        }
+
+			        HAL_Delay(1);
+			    }
+
+			    page = 1;
+			    clear_buffer();
+			    update_display_chunks(Buffer);
+			    pressed = 1;
+			}
+			if (page == 6) {
+			    const char *bypass_options[] = { "Disabled", "Enabled" };
+			    const int bypass_option_count = sizeof(bypass_options) / sizeof(bypass_options[0]);
+
+			    pad_center(Buffer[0], "Settings: Fire Bypass");
+			    snprintf(message, sizeof(message), "Status: %s", bypass_options[ignore_shots_remaining]);
+			    pad_center(Buffer[2], message);
+			    update_display_chunks(Buffer);
+
+			    while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) || pressed == 1) {
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_SET) {
+			            pressed = 0;
+			        }
+
+			        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+			            enter_emergency_shutdown();
+			        }
+
+			        int delta = read_encoder_delta();
+			        if (delta != 0) {
+			            ignore_shots_remaining += delta * -1;
+
+			            // Clamp between 0 and 1
+			            if (ignore_shots_remaining < 0) ignore_shots_remaining = 0;
+			            if (ignore_shots_remaining > 1) ignore_shots_remaining = 1;
+
+			            snprintf(message, sizeof(message), "Status: %s", bypass_options[ignore_shots_remaining]);
+			            pad_center(Buffer[2], message);
+			            update_display_chunks(Buffer);
+			        }
+
+			        HAL_Delay(1);
+			    }
+
+			    page = 1;
+			    clear_buffer();
+			    update_display_chunks(Buffer);
+			    pressed = 1;
+			}
+
 		}
 	}
 }
