@@ -186,6 +186,38 @@ void pad_left_20(char dst[20], const char *src) {
         memset(dst + len, ' ', 20 - len);
 }
 
+void enter_emergency_shutdown(void) {
+    // Immediately stop everything
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // pump off
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET); // LED1 off
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET); // LED2 off
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET); // LED3 off
+
+    clear_buffer();
+    pad_center(Buffer[1], "!! LEAK DETECTED !!");
+    pad_center(Buffer[2], "Shutdown.");
+    update_display_chunks(Buffer);
+
+    uint32_t shutdown_start = HAL_GetTick();
+
+    while (HAL_GetTick() - shutdown_start < 5000) {
+        HAL_Delay(10); // Wait quietly for 5 seconds
+    }
+
+    NHD_OLED_displayOff(); // Turn off OLED after 5 sec
+
+    // Now sit here doing nothing until a reset button (e.g., PB3) is pressed
+    while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) {
+        // Waiting for PB3 to be pressed
+        HAL_Delay(10);
+    }
+
+    // Optionally: Hard reset microcontroller when button is pressed
+    NVIC_SystemReset();
+}
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -227,6 +259,8 @@ int main(void) {
     char message[20];
     static uint8_t refill_button_was_down = 0;
     uint8_t length;
+	static uint8_t emergency_previous = 1;
+
 
     HAL_Init();
     SystemClock_Config();
@@ -246,6 +280,11 @@ int main(void) {
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
 
     while (1) {
+
+    	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+    	    enter_emergency_shutdown();
+    	}
+
         if (!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4)) {
             if (pressed != 1) {
                 page = (page == 0) ? 1 : 0;
@@ -290,7 +329,7 @@ int main(void) {
                 }
             }
 
-            uint8_t refill_button = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1);
+            uint8_t refill_button = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
             if (refill_button == GPIO_PIN_RESET && !refill_button_was_down) {
                 refill_button_was_down = 1;
 
@@ -308,8 +347,11 @@ int main(void) {
                 update_display_chunks(Buffer);
 
                 while (1) {
-                    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
-                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+                	    enter_emergency_shutdown();
+                	}
+                    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) refill_button_was_released = 1;
+                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
                         cancelled = 1;
                         break;
                     }
@@ -330,8 +372,11 @@ int main(void) {
                 }
 
                 while (!cancelled && current_psi < 70) {
-                    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
-                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+                	    enter_emergency_shutdown();
+                	}
+                    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) refill_button_was_released = 1;
+                    if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
                         cancelled = 1;
                         break;
                     }
@@ -344,12 +389,15 @@ int main(void) {
                 }
 
                 if (!cancelled) {
+                	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+                	    enter_emergency_shutdown();
+                	}
                     pad_center(Buffer[3], "Refill: Final Boost");
                     update_display_chunks(Buffer);
                     uint32_t end_time = HAL_GetTick() + 5000;
                     while (HAL_GetTick() < end_time) {
-                        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) refill_button_was_released = 1;
-                        if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+                        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) refill_button_was_released = 1;
+                        if (refill_button_was_released && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_RESET) {
                             cancelled = 1;
                             break;
                         }
@@ -373,7 +421,7 @@ int main(void) {
                 pad_center(Buffer[1], message);
                 update_display_chunks(Buffer);
 
-                if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_SET) {
+                if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) {
                     refill_button_was_down = 0;
                 }
             }
@@ -397,6 +445,9 @@ int main(void) {
             update_display_chunks(Buffer);
 
             while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4)) {
+            	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_RESET) {
+            	    enter_emergency_shutdown();
+            	}
                 int delta = read_encoder_delta();
                 if (delta != 0) {
                     shot_length += delta * 20;

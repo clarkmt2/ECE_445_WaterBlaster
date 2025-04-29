@@ -1,3 +1,4 @@
+../Drivers/CMSIS/Include/core_cm0plus.h:985:34:__NVIC_SystemReset	8	static,ignoring_inline_asm
 ../Core/Src/main.c:49:5:read_pressure_psi	24	static
 ../Core/Src/main.c:73:5:read_encoder_delta	24	static
 ../Core/Src/main.c:126:6:clear_buffer	16	static
@@ -5,8 +6,9 @@
 ../Core/Src/main.c:161:6:pad_center	32	static
 ../Core/Src/main.c:172:6:pad_right_20	24	static
 ../Core/Src/main.c:180:6:pad_left_20	24	static
-../Core/Src/main.c:215:5:main	104	static
-../Core/Src/main.c:426:10:SystemClock_Config	88	static
-../Core/Src/main.c:468:17:MX_ADC1_Init	24	static
-../Core/Src/main.c:526:17:MX_GPIO_Init	48	static
-../Core/Src/main.c:607:10:Error_Handler	8	static,ignoring_inline_asm
+../Core/Src/main.c:189:6:enter_emergency_shutdown	16	static
+../Core/Src/main.c:247:5:main	104	static
+../Core/Src/main.c:477:10:SystemClock_Config	88	static
+../Core/Src/main.c:519:17:MX_ADC1_Init	24	static
+../Core/Src/main.c:577:17:MX_GPIO_Init	48	static
+../Core/Src/main.c:658:10:Error_Handler	8	static,ignoring_inline_asm
