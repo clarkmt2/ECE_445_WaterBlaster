@@ -636,6 +636,17 @@
 			(uuid "5475ac5e-7ed0-440f-bacd-ebad45c4e2e0")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:SW_PEC11R-4XXXK-SXXXX_BRN"
 		(layer "F.Cu")
@@ -1555,6 +1566,17 @@
 			(uuid "accb1010-66e8-48c4-bc8f-3c19e36e935d")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:PTS645SL43SMTR92LFS_CNK"
 		(layer "F.Cu")
@@ -2091,6 +2113,17 @@
 			(uuid "64b68319-c87d-45b9-993b-e5bb3c73e138")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:PTS645SL43SMTR92LFS_CNK"
 		(layer "F.Cu")
@@ -2627,6 +2660,17 @@
 			(uuid "56407ec1-b19b-46f6-91ec-81478649e11a")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:PTS645SL43SMTR92LFS_CNK"
 		(layer "F.Cu")
@@ -3163,6 +3207,17 @@
 			(uuid "9ed27c5f-63ad-41b4-a0d3-ff6d34bf93f3")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:PTS645SL43SMTR92LFS_CNK"
 		(layer "F.Cu")
@@ -3699,6 +3754,17 @@
 			(uuid "2b4d391d-3576-429b-b38e-d7d587e85aa7")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "WaterBlaster:PTS645SL43SMTR92LFS_CNK"
 		(layer "F.Cu")
@@ -4235,6 +4301,17 @@
 			(uuid "1133c53d-bf49-401a-8eeb-c764cc07666c")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/PTS645SL43SMTR92 LFS.STEP"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder"
 		(layer "B.Cu")
@@ -7045,6 +7122,17 @@
 			(uuid "8eb6f183-b501-4431-b74a-c11ccfe8de6f")
 		)
 		(embedded_fonts no)
+		(model "/Users/clarktaylor/Desktop/WaterBlaster/ECE_445_WaterBlaster/pcb/WaterBlaster/Library/StepFiles/436501215.stp"
+			(offset
+				(xyz 0 -2.5 9.5)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 90 -0 -0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder"
 		(layer "B.Cu")

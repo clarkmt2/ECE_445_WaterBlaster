@@ -501,7 +501,7 @@
       "plot": "LeakSensorGerbersV1",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "LeakDetectionSensorV1.step",
       "svg": "",
       "vrml": ""
     },

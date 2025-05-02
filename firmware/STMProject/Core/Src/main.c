@@ -20,6 +20,10 @@
 #include "main.h"
 #include "newhaven_slim_oled.h"
 #include "NHD_2066.h"
+#include <stdio.h>
+#include <string.h>
+
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -61,7 +65,131 @@ static void MX_GPIO_Init(void);
 /**
   * @brief  The application entry point.
   * @retval int
+  *
+  *
+  *
+  *
+  *
+  *
   */
+
+/* USER CODE BEGIN PV */
+uint8_t menu_mode = 0; // 0 = HOME, 1 = SETTINGS
+uint8_t shot_count = 0;
+uint32_t last_heartbeat = 0;
+uint32_t last_valve_open_time = 0;
+uint8_t valve_open = 0;
+uint16_t valve_duration = 200;
+uint8_t encoder_last_state = 0;
+
+/* USER CODE END PV */
+
+/* USER CODE BEGIN PFP */
+
+ADC_HandleTypeDef hadc1;
+
+
+int read_pressure_psi(void) {
+    HAL_ADC_Start(&hadc1);
+
+    if (HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) != HAL_OK) {
+        return -1;
+    }
+
+    uint32_t adc_raw_value = HAL_ADC_GetValue(&hadc1);
+    float voltage = ((adc_raw_value * 3.3f) / 4095.0f) * 2.0f;
+
+    if (voltage < 0.7f) voltage = 0.7f;
+    if (voltage > 4.5f) voltage = 4.5f;
+
+    float pressure = ((voltage - 0.7f) / 3.8f) * 150.0f;
+
+    // Proper rounding for both positive and negative values
+    if (pressure >= 0.0f)
+        return (int)(pressure + 0.5f);
+    else
+        return (int)(pressure - 0.5f);
+}
+
+void update_heartbeat_led(void) {
+    if (HAL_GetTick() - last_heartbeat >= 1000) {
+        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+        last_heartbeat = HAL_GetTick();
+    }
+}
+
+void render_home_screen(int pressure) {
+    NHD_OLED_textClear();
+    char line[21];
+    snprintf(line, sizeof(line), "Pressure: %3d PSI", pressure);
+    NHD_OLED_print_len_pos(line, strlen(line), 0, 0);
+
+    snprintf(line, sizeof(line), "Shots Remaining: %2d", shot_count);
+    NHD_OLED_print_len_pos(line, strlen(line), 1, 0);
+
+    int bar_len = (shot_count * 20) / 14;
+    for (int i = 0; i < 20; ++i) {
+        NHD_OLED_cursorPos(3, i);
+        NHD_OLED_print_char(i < bar_len ? 0xFF : ' ');
+    }
+}
+
+void render_settings_menu(void) {
+    NHD_OLED_textClear();
+    char line[21];
+    snprintf(line, sizeof(line), "Burst Time: %4dms", valve_duration);
+    NHD_OLED_print_len_pos(line, strlen(line), 1, 0);
+    int bar_len = (valve_duration - 50) * 20 / (1000 - 50);
+    for (int i = 0; i < 20; ++i) {
+        NHD_OLED_cursorPos(3, i);
+        NHD_OLED_print_char(i < bar_len ? 0xFF : ' ');
+    }
+}
+
+int read_encoder_delta(void) {
+    static uint8_t last_encoded = 0;
+    uint8_t MSB = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_2);
+    uint8_t LSB = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_3);
+    uint8_t encoded = (MSB << 1) | LSB;
+    uint8_t sum = (last_encoded << 2) | encoded;
+    last_encoded = encoded;
+    if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) return 1;
+    if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) return -1;
+    return 0;
+}
+
+void process_trigger(void) {
+    if (shot_count > 0 && HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+        last_valve_open_time = HAL_GetTick();
+        valve_open = 1;
+        shot_count--;
+    }
+    if (valve_open && HAL_GetTick() - last_valve_open_time >= valve_duration) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+        valve_open = 0;
+    }
+}
+
+void process_pump(void) {
+    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1) == GPIO_PIN_RESET) {
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
+    } else {
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+    }
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == GPIO_PIN_4) {
+        menu_mode ^= 1;
+        HAL_Delay(200);
+    }
+}
+
 int main(void)
 {
 

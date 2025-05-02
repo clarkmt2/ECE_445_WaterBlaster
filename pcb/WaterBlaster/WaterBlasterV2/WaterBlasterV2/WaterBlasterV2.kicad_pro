@@ -505,7 +505,7 @@
       "plot": "WaterBlasterV2Gerbers",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "WaterBlasterV2.step",
       "svg": "",
       "vrml": ""
     },
