@@ -253,6 +253,12 @@ void monitor_status(void) {
 	}
 }
 /* USER CODE END PV */
+int psi_to_percent(int psi) {
+    if (psi >= 75) return 100;
+    if (psi <= 25) return 0;
+
+    return ((psi - 25) * 100) / 50;  // scale from 25–75 PSI to 0–100%
+}
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -389,8 +395,10 @@ int main(void) {
 				snprintf(message, sizeof(message), "%d PSI", last_pressure_value);
 				pad_center(Buffer[1], message);
 
-				snprintf(message, sizeof(message), "Shots Remaining: %d", shots);
+				int tank_percent = psi_to_percent(last_pressure_value);
+				snprintf(message, sizeof(message), "Tank: %d%%", tank_percent);
 				pad_center(Buffer[2], message);
+
 
 				// trigger
 				if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_11) == GPIO_PIN_RESET) {
@@ -479,6 +487,9 @@ int main(void) {
 					pad_center(Buffer[3], "Refill: Valve Open");
 					snprintf(message, sizeof(message), "%d PSI", current_psi);
 					pad_center(Buffer[1], message);
+					snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+					pad_center(Buffer[2], message);
+
 					update_display_chunks(Buffer);
 
 					while (1) {
@@ -493,12 +504,18 @@ int main(void) {
 						pad_center(Buffer[3], "Refill: Valve Open");
 						snprintf(message, sizeof(message), "%d PSI", current_psi);
 						pad_center(Buffer[1], message);
+						snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+						pad_center(Buffer[2], message);
+
 						update_display_chunks(Buffer);
 						if (current_psi >= 12) {
 							HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // close valve immediately
 							pad_center(Buffer[3], "Refill: Valve Shut");
 							snprintf(message, sizeof(message), "%d PSI", current_psi);
 							pad_center(Buffer[1], message);
+							snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+							pad_center(Buffer[2], message);
+
 							update_display_chunks(Buffer);
 							break;
 						}
@@ -516,6 +533,9 @@ int main(void) {
 						pad_center(Buffer[3], "Refill: Charging");
 						snprintf(message, sizeof(message), "%d PSI", current_psi);
 						pad_center(Buffer[1], message);
+						snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+						pad_center(Buffer[2], message);
+
 						update_display_chunks(Buffer);
 						HAL_Delay(100);
 					}
@@ -534,6 +554,9 @@ int main(void) {
 							current_psi = read_pressure_psi();
 							snprintf(message, sizeof(message), "%d PSI", current_psi);
 							pad_center(Buffer[1], message);
+							snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+							pad_center(Buffer[2], message);
+
 							update_display_chunks(Buffer);
 							HAL_Delay(100);
 						}
@@ -549,6 +572,9 @@ int main(void) {
 
 					snprintf(message, sizeof(message), "%d PSI", current_psi);
 					pad_center(Buffer[1], message);
+					snprintf(message, sizeof(message), "Tank: %d%%", psi_to_percent(current_psi));
+					pad_center(Buffer[2], message);
+
 					update_display_chunks(Buffer);
 
 					if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET) {
@@ -789,6 +815,46 @@ int main(void) {
 			    update_display_chunks(Buffer);
 			    pressed = 1;
 			}
+			if (page == 4) {
+			    pad_center(Buffer[0], "Drain Tank");
+			    pad_center(Buffer[2], "Valve Open");
+			    update_display_chunks(Buffer);
+
+			    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); // valve open
+
+			    uint32_t start_time = HAL_GetTick();
+			    const uint32_t drain_duration_ms = 60000;
+
+			    while (HAL_GetTick() - start_time < drain_duration_ms) {
+			        // Exit early if encoder button is pressed
+			        if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_4) == GPIO_PIN_RESET) {
+			            break;
+			        }
+
+			        monitor_status();
+
+			        // Update countdown display every second
+			        uint32_t seconds_left = (drain_duration_ms - (HAL_GetTick() - start_time)) / 1000;
+			        snprintf(message, sizeof(message), "Time Left: %lus", seconds_left);
+			        pad_center(Buffer[3], message);
+			        update_display_chunks(Buffer);
+
+			        HAL_Delay(100); // fast enough for cancel, slow enough for display
+			    }
+
+			    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET); // valve closed
+
+			    pad_center(Buffer[2], "Valve Closed");
+			    pad_center(Buffer[3], "Returning...");
+			    update_display_chunks(Buffer);
+			    HAL_Delay(1000);
+
+			    page = 1;
+			    clear_buffer();
+			    update_display_chunks(Buffer);
+			    pressed = 1;
+			}
+
 
 		}
 	}
