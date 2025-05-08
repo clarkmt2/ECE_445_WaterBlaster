@@ -1,4 +1,7 @@
-Developed first version of our board very early, we are unsure of mechanical implementation just yet
+First main board is ready around week 5. 
+
+We met with Jack Blevins
+Developed first version of our board very early (before week 8), we are unsure of mechanical implementation just yet
 
 Few ideas we have,
 Plunger, expandable ballast
@@ -264,7 +267,7 @@ Fire the blaster and measure the distance reached. Tune to achieve 5 powerful bu
 
 
 
-References 
+References:
 
 [1] “Bernoulli’s Equation.” Princeton University, The Trustees of Princeton University, www.princeton.edu/~asmits/Bicycle_web/Bernoulli.html. Accessed 6 Mar. 2025.  
 
