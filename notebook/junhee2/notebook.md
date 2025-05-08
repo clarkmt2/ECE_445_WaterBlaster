@@ -23,8 +23,7 @@
 - Set up the **OLED display driver** and basic firmware.
 - Began CAD design of various mechanical parts.
 
-<img src="/Screenshot%202025-04-02%20193035.png" alt="OLED display" width="400"/>
----
+![](notebook/junhee2/Screenshot%202025-04-02%20193035.png)---
 
 ### **Week 10**
 - Soldered components onto the **main board**.
