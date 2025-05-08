@@ -23,7 +23,7 @@
 - Set up the **OLED display driver** and basic firmware.
 - Began CAD design of various mechanical parts.
 
-
+[OLED display]Screenshot 2025-04-02 193035.png
 ---
 
 ### **Week 10**
