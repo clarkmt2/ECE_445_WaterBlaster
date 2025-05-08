@@ -44,6 +44,8 @@ After continuing to work on the enclosure witht he finalized parts we have deter
 
 Design procedure overview (similar to what will be in the report)
 
+This section mentions adjustments from weekly TA meeting checks and how we got guided to our final solution. 
+
 When we began our design we found many different potential solutions, some we were able to
 rule out quickly due to lack of part availability, such as an expandable water bladder to 
 attach to our pump, as when we went to work on this, we found it would need a custom 
@@ -149,6 +151,116 @@ youtube. We went on to present our project and everything went very well.
 Link to extra credit video and demonstration of our project.
 
 https://www.youtube.com/watch?v=EbqiNhb4QeM
+
+ 
+
+Subsystem 
+
+Requirement 
+
+Verification 
+
+Control Board 
+
+The control board must process inputs and update outputs within 100 ms of receiving sensor data. 
+
+ 
+
+The control board must activate the pump and solenoid valve correctly 100% of the time triggered. 
+
+ 
+
+The control board must correctly send data to the SPI display without noticeable glitches or missing updates. 
+
+Observe system behavior with button presses and sensor inputs to ensure there is no noticeable lag. 
+
+ 
+
+Run 50 activation cycles and verify that all commands result in the expected action. 
+
+ 
+
+Operate the system for 5 minutes, ensuring that display information updates smoothly without flickering or freezing. 
+
+Inputs & Outputs 
+
+The trigger button must activate the water blaster every time it is pressed, with no missed input.  
+
+ 
+
+The potentiometer must allow smooth control over firing power with noticeable differences between minimum and maximum settings. 
+
+Press the button 50 times and confirm that every press result in activation of some sort 
+
+ 
+
+Adjust the potentiometer and confirm that different power levels produce visibly different water blasts, the water quantity can be measured using a beaker to ensure the quantity of water fired has increased. 
+
+ 
+
+Battery 
+
+The battery must power the system for at least 30 minutes of continuous firing operation. 
+
+ 
+
+The battery system must provide a stable 12 V (1 V margin of error) output. 
+
+Fully charge the battery, operate the system continuously, and record runtime on a stopwatch. 
+
+ 
+
+Measure voltage before and after 10 minutes of operation to ensure no significant drop. 
+
+Frame & Shell 
+
+The enclosure must prevent leaks when sprayed with water from all angles for 5 minutes. 
+
+ 
+
+The shell must not crack or deform if dropped from 1 meter onto grass or pavement. 
+
+Spray tests the assembled device and inspect for internal moister. Ensure a maximum of 1.5 ml of water ingress. 
+
+ 
+
+Drop test from 1 meter height and confirm no functional damage. 
+
+Sensor Array 
+
+The system must accurately indicate the capacity of the tank within 25%. 
+
+ 
+
+The system must alert the user within 10 seconds of detecting internal water leakage.  
+
+Fill and empty the tank to these levels and confirm the display updates correctly with the indicated water level after water in/water out is measured.  
+
+ 
+
+Pour 100 ml of water into the system, hold the water blaster vertically as if in firing position. The system should shut down within 10 seconds of the blaster being held vertically or never power on to begin with. Time with a stopwatch to ensure timely power down sequence.  
+
+Pump, Solenoid Valve, and Tank 
+
+The pump must fill the tank from empty within 30 seconds. 
+
+ 
+
+The valve must open and close within 100 ms of being triggered.  
+
+ 
+
+The blaster must shoot water at least 15 ft when fully pressurized. For at least one running configuration, a maximum shot distance of 20 ft should be achieved. 
+
+Time how long it takes to fill the tank and ensure it meets the requirement using a stopwatch. Ensure the tank is completely empty prior to this test.  
+
+ 
+
+Fire the blaster and use a stopwatch to tie the delay between button press and water visibly leaving the blaster. It should be within 100 ms. 
+
+ 
+
+Fire the blaster and measure the distance reached. Tune to achieve 5 powerful bursts and record the distance to ensure 15 ft is recorded. Then refill and tun the settings for the maximum power and fire one shot to ensure 20 ft is recorded.  
 
 
 
