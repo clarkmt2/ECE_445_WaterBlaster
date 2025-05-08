@@ -149,3 +149,31 @@ youtube. We went on to present our project and everything went very well.
 Link to extra credit video and demonstration of our project.
 
 https://www.youtube.com/watch?v=EbqiNhb4QeM
+
+
+
+References 
+
+[1] “Bernoulli’s Equation.” Princeton University, The Trustees of Princeton University, www.princeton.edu/~asmits/Bicycle_web/Bernoulli.html. Accessed 6 Mar. 2025.  
+
+ 
+
+[2] “Elastic Pressure Water Blaster Technology .:” Elastic Pressure Water Blaster 
+Technology :: :: iSoaker.Com, www.isoaker.com/Tech/elastic-pressure-water-blaster-
+technology.php. Accessed 6 Mar. 2025.  
+
+
+ 
+
+[3] “How to Manufacture Carbon Fiber Parts.” Formlabs, formlabs.com/blog/composite-materials-carbon-fiber-layup/. Accessed 6 Mar. 2025. 
+
+ 
+
+[4] Lam, L. (n.d.). The continuous refill, short-burst, hand- powered water toy. https://dspace.mit.edu/bitstream/handle/1721.1/59943/676918672-MIT.pdf?sequence=2  
+
+ 
+
+[5] Rathi, S. (2024, July 11). A critical review of leakage detection strategies including pressure and water quality sensor placement in water distribution systems – 
+sole and integrated approaches for leakage and contamination intrusion. 2nd International
+Join Conference on Water Distribution System Analysis (WDSA) & Computing and Control in 
+the Water Industry (CCWI). https://riunet.upv.es/handle/10251/205921  
