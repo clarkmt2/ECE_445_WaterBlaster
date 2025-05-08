@@ -68,7 +68,7 @@
 - Resolved prior issues with water fill and encoder responsiveness.
 - Began **formal verification** of subsystem requirements.
 
-![OLED display - Menu](Screenshot%202025-05-08%161227.png)
+![OLED display menu](Screenshot%202025-05-08%20161227.png)
 ---
 
 
