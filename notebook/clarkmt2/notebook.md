@@ -41,7 +41,7 @@ We also have a very basic sketch that I have attached to my notebook that shows 
 After continuing to work on the enclosure witht he finalized parts we have determined that the water blaster will look pretty good. I have attached photos of our CAD into to the notebook on my seciton. 
 
 
-
+March 11th - April 20th
 Design procedure overview (similar to what will be in the report)
 
 This section mentions adjustments from weekly TA meeting checks and how we got guided to our final solution. 
@@ -152,7 +152,7 @@ Link to extra credit video and demonstration of our project.
 
 https://www.youtube.com/watch?v=EbqiNhb4QeM
 
- 
+April 21st - May 6th
 
 Subsystem 
 
