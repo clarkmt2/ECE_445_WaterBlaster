@@ -30,6 +30,7 @@
 - Soldered components onto the **main board**.
 - Verified successful connection between the **OLED display** and the **STM32 microcontroller**.
 
+![OLED display - valve and pump](Screenshot%202025-04-02%20194642.png)
 ---
 
 ### **Week 11**
