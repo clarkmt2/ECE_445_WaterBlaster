@@ -79,3 +79,6 @@
 - Debugged firmware, optimized power consumption.
 - Compiled notes, generated final test data.
 
+---
+
+![Fully Assembled Water Blaster](waterblaster.png)
